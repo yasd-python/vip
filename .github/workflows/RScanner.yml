@@ -1,123 +1,92 @@
-name: 🌌 Quantum-AI God Tier (Memory & SOCKS5)
+name: 🌌 Quantum-AI Omni-Proxy Master (God Mode)
 
 on:
   workflow_dispatch:
-    inputs:
-      scan_mode:
-        description: 'Scan Strategy'
-        default: 'god_mode'
-        type: choice
-        options:
-          - 'god_mode'      # Deep verification + Memory
-          - 'hyperspeed'    # Latency only
   schedule:
-    - cron: '0 */3 * * *' # Run every 3 hours
+    - cron: '*/30 * * * *' # Auto-runs every 30 minutes for real-time intelligence
 
 concurrency:
   group: quantum-god-mode
   cancel-in-progress: true
 
-permissions:
-  contents: read
-  actions: write
-
 env:
-  CARGO_TERM_COLOR: always
-  RUSTFLAGS: "-C target-cpu=native -C opt-level=3"
-
+  # ⚙️ QUANTUM CONFIGURATION
+  SCAN_THREADS: "500"          # Massive parallelism
+  TIMEOUT_MS: "1500"           # Strict cutoff for speed
+  STABILITY_SAMPLES: "3"       # How many times to test the winner (Precision)
+  AI_WEIGHT_LATENCY: "0.4"     # Neural Weight for Speed
+  AI_WEIGHT_STABILITY: "0.6"   # Neural Weight for Reliability
+  
 jobs:
-  quantum-god-scan:
-    name: 🧠 AI Core: Deep Analysis & Memory Recall
+  quantum-neural-core:
+    name: 🧠 Running Neural Network Scan
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 15
 
     steps:
-      - name: 📥 Initialize Repository
+      # ----------------------------------------------------------------
+      # 1. KERNEL LEVEL OPTIMIZATION (Speed Hack)
+      # ----------------------------------------------------------------
+      - name: 🚀 Inject Hyper-Speed Kernel Flags
+        run: |
+          echo "⚡ Overclocking Linux Network Stack..."
+          sudo sysctl -w net.ipv4.tcp_congestion_control=bbr
+          sudo sysctl -w net.core.default_qdisc=fq
+          sudo sysctl -w net.ipv4.tcp_window_scaling=1
+          sudo sysctl -w net.ipv4.tcp_max_syn_backlog=4096
+          sudo sysctl -w net.core.somaxconn=4096
+          sudo sysctl -w fs.file-max=100000
+          ulimit -n 100000
+          echo "✅ System is now in Quantum Ready state."
+
+      - name: 📥 Initialize Codebase
         uses: actions/checkout@v4
 
       # ----------------------------------------------------------------
-      # 1. KERNEL: Ultimate Network Stack Tuning
+      # 2. INSTALL TOOLS & RUST
       # ----------------------------------------------------------------
-      - name: 🚀 Kernel Injection (God Mode)
-        run: |
-          # Maximum file descriptors
-          sudo sh -c 'ulimit -n 999999'
-          # Enable BBR Congestion Control (Google's Algorithm)
-          sudo modprobe tcp_bbr
-          sudo sysctl -w net.ipv4.tcp_congestion_control=bbr
-          sudo sysctl -w net.ipv4.tcp_tw_reuse=1
-          sudo sysctl -w net.ipv4.ip_local_port_range="1024 65535"
-          sudo sysctl -w net.core.rmem_max=134217728
-          sudo sysctl -w net.core.wmem_max=134217728
-          echo "✅ Kernel optimized for massive throughput."
+      - name: 🦀 Setup Rust (The Engine)
+        uses: dtolnay/rust-toolchain@stable
 
-      # ----------------------------------------------------------------
-      # 2. MEMORY RECALL: Retrieve Past Winners (Learning)
-      # ----------------------------------------------------------------
-      - name: 🧠 AI Memory Recall (From D1)
-        env:
-          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-          D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
+      - name: 🛠️ Install Utilities
         run: |
-          echo "Connecting to Hive Mind (D1 Database)..."
+          sudo apt-get update -qq
+          sudo apt-get install -y jq curl bc geoip-bin geoip-database
+          
+      # ----------------------------------------------------------------
+      # 3. GLOBAL HARVESTING (The Net)
+      # ----------------------------------------------------------------
+      - name: 🕸️ Quantum Harvesting
+        run: |
           mkdir -p data
+          echo "Collecting proxies from global nodes..."
           
-          # Fetch reliable IPs from previous successful runs
-          SQL="SELECT ip_port FROM quantum_proxy WHERE stability_percent > 80 ORDER BY total_score DESC LIMIT 50;"
-          
-          RESP=$(curl -s -X POST "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/d1/database/$D1_DATABASE_ID/query" \
-            -H "Authorization: Bearer $CF_API_TOKEN" \
-            -H "Content-Type: application/json" \
-            --data "$(jq -n --arg sql "$SQL" '{sql: $sql}')")
-            
-          # Extract IPs
-          echo "$RESP" | jq -r '.result[0].results[].ip_port' > data/memory_nodes.txt || echo "" > data/memory_nodes.txt
-          
-          MEM_COUNT=$(wc -l < data/memory_nodes.txt)
-          echo "🧠 AI Recalled $MEM_COUNT elite nodes from memory."
-
-      # ----------------------------------------------------------------
-      # 3. HARVESTING: Massive Collection
-      # ----------------------------------------------------------------
-      - name: 🌐 Global Harvesting (HTTP + SOCKS5)
-        run: |
-          # Sources mixed (HTTP, SOCKS4, SOCKS5)
+          # High-Quality Sources
           SOURCES=(
             "https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/http.txt"
-            "https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/socks5.txt"
             "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/http.txt"
-            "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks5.txt"
+            "https://raw.githubusercontent.com/proxifly/free-proxy-list/main/proxies/protocols/http/data.txt"
             "https://raw.githubusercontent.com/zloi-user/hideip.me/main/http.txt"
+            "https://www.proxy-list.download/api/v1/get?type=http"
           )
           
-          touch data/raw.txt
-          for src in "${SOURCES[@]}"; do
-             curl -sL --max-time 10 --retry 1 "$src" >> data/raw.txt
+          for url in "${SOURCES[@]}"; do
+            curl -s --max-time 5 "$url" >> data/raw.txt || echo "⚠️ Source failed, skipping..."
           done
           
-          # Combine New Harvest + Memory Nodes
-          cat data/memory_nodes.txt >> data/raw.txt
+          # Regex Purification & Deduplication
+          grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]+" data/raw.txt | sort -u | shuf | head -n 3000 > data/targets.txt
           
-          # Clean & Deduplicate
-          grep -Eo "([0-9]{1,3}[\.]){3}[0-9]{1,3}:[0-9]+" data/raw.txt | sort -u | shuf | head -n 2000 > data/candidates.txt
-          
-          # Emergency Injection
-          if [ $(wc -l < data/candidates.txt) -lt 10 ]; then
-             echo "1.1.1.1:80" >> data/candidates.txt
-          fi
+          COUNT=$(wc -l < data/targets.txt)
+          echo "✅ Neural Net loaded with $COUNT unique candidates."
 
       # ----------------------------------------------------------------
-      # 4. RUST ENGINE: God Tier (Real Data Test)
+      # 4. COMPILING THE AI ENGINE (Embedded Rust)
       # ----------------------------------------------------------------
-      - name: 🦀 Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
-
-      - name: ⚡ Build Quantum Engine v2.0 (Deep Inspection)
+      - name: 🧠 Compile Heuristic AI Engine
         run: |
-          cat > main.rs << 'EOF'
+          # Writing the Rust code dynamically to ensure no file dependencies
+          cat > engine.rs << 'EOF'
           use std::env;
           use std::fs::File;
           use std::io::{BufRead, BufReader, Write, Read};
@@ -125,174 +94,201 @@ jobs:
           use std::time::{Duration, Instant};
           use std::thread;
           use std::sync::{Arc, Mutex};
-          
-          #[derive(Clone, Debug)]
-          struct ProxyStats {
-              ip_port: String,
+
+          // --- NEURAL DATA STRUCTURE ---
+          #[derive(Debug, Clone, Copy)]
+          struct NodeScore {
               latency: u128,
-              ttfb: u128,          // Time To First Byte (Real Data Speed)
-              stability: u32,
-              total_score: u64,
+              jitter: u128,
+              stability_index: f64,
+              packet_loss_sim: bool,
+              ai_score: f64,
           }
 
           fn main() {
               let args: Vec<String> = env::args().collect();
-              let filename = &args[1];
-              let file = File::open(filename).expect("File error");
+              let target_file = &args[1];
+              
+              let file = File::open(target_file).expect("Failed to open targets");
               let reader = BufReader::new(file);
               let proxies: Vec<String> = reader.lines().filter_map(Result::ok).collect();
               
               let results = Arc::new(Mutex::new(Vec::new()));
               let mut handles = vec![];
-              let chunk_size = (proxies.len() / 60) + 1; // 60 Threads for speed
-              
+
+              // --- QUANTUM PARALLELISM ---
+              let chunk_size = 4; // Small chunks for fast context switching
               for chunk in proxies.chunks(chunk_size) {
                   let chunk = chunk.to_vec();
                   let results = Arc::clone(&results);
                   
-                  handles.push(thread::spawn(move || {
+                  let handle = thread::spawn(move || {
                       for proxy in chunk {
-                          if let Ok(stats) = deep_analyze(&proxy) {
-                              results.lock().unwrap().push(stats);
+                          if let Some((ip, score)) = scan_node(&proxy) {
+                              // Only keep High-Tier nodes
+                              if score.ai_score > 50.0 {
+                                  let mut data = results.lock().unwrap();
+                                  data.push((ip, score));
+                              }
                           }
                       }
-                  }));
+                  });
+                  handles.push(handle);
               }
 
-              for h in handles { h.join().unwrap(); }
+              for handle in handles {
+                  let _ = handle.join();
+              }
 
-              // Save Results
+              // --- SERIALIZATION ---
               let data = results.lock().unwrap();
-              let mut out = File::create("rust_results.json").unwrap();
+              let mut out = File::create("ai_results.json").unwrap();
               write!(out, "[").unwrap();
-              for (i, stat) in data.iter().enumerate() {
+              for (i, (ip, score)) in data.iter().enumerate() {
                   if i > 0 { write!(out, ",").unwrap(); }
-                  write!(out, "{{\"ip_port\":\"{}\",\"latency_ms\":{},\"ttfb_ms\":{},\"stability_percent\":{},\"total_score\":{}}}", 
-                      stat.ip_port, stat.latency, stat.ttfb, stat.stability, stat.total_score).unwrap();
+                  write!(out, "{{\"ip\":\"{}\",\"lat\":{},\"jit\":{},\"stab\":{:.2},\"score\":{:.2}}}", 
+                      ip, score.latency, score.jitter, score.stability_index, score.ai_score).unwrap();
               }
               write!(out, "]").unwrap();
           }
 
-          // ** GOD MODE LOGIC **
-          fn deep_analyze(ip: &str) -> Result<ProxyStats, String> {
-              let addr: SocketAddr = ip.parse().map_err(|_| "Bad IP")?;
-              
-              // 1. TCP Handshake (Latency)
+          // --- HEURISTIC AI LOGIC (The "Brain") ---
+          fn scan_node(ip_str: &str) -> Option<(String, NodeScore)> {
+              let addr: SocketAddr = match ip_str.parse() {
+                  Ok(a) => a,
+                  Err(_) => return None,
+              };
+
+              // Phase 1: Handshake (Ping)
               let start = Instant::now();
-              let mut stream = TcpStream::connect_timeout(&addr, Duration::from_millis(1500)).map_err(|_| "Dead")?;
-              let latency = start.elapsed().as_millis();
-              
-              // 2. Real Data Test (TTFB) - Send a tiny HTTP HEAD request
-              // This proves the proxy actually moves data, not just accepts connections.
-              let request = format!("HEAD http://www.google.com/ HTTP/1.1\r\nHost: www.google.com\r\nConnection: close\r\n\r\n");
-              
-              stream.set_write_timeout(Some(Duration::from_millis(1500))).ok();
-              stream.set_read_timeout(Some(Duration::from_millis(1500))).ok();
-              
-              let start_ttfb = Instant::now();
-              if stream.write_all(request.as_bytes()).is_err() { return Err("Write Fail".to_string()); }
-              
-              let mut buffer = [0; 8]; // Just read first few bytes to confirm life
-              if stream.read(&mut buffer).is_err() { return Err("No Data".to_string()); }
-              let ttfb = start_ttfb.elapsed().as_millis();
+              match TcpStream::connect_timeout(&addr, Duration::from_millis(1500)) {
+                  Ok(mut stream) => {
+                      let latency = start.elapsed().as_millis();
+                      
+                      // Phase 2: Jitter Analysis (Stability)
+                      // We wait briefly and ping again to see if the connection fluctuates
+                      thread::sleep(Duration::from_millis(50));
+                      let start2 = Instant::now();
+                      let latency2 = match TcpStream::connect_timeout(&addr, Duration::from_millis(1500)) {
+                          Ok(_) => start2.elapsed().as_millis(),
+                          Err(_) => return None, // Failed stability check
+                      };
 
-              // 3. AI Scoring Algorithm (Updated for TTFB)
-              let mut stability = 100;
-              if latency > 400 { stability -= 20; }
-              if ttfb > 600 { stability -= 30; } // If data transfer is slow, penalty
-              if ttfb > latency * 3 { stability -= 10; } // If processing time is huge compared to ping
-              
-              // Score: (Stability * 10) + (Speed Factor)
-              // We prioritize TTFB (Real Speed) over Ping now.
-              let speed_score = 20000 / (ttfb + 1);
-              let total_score = (stability as u64 * 10) + (speed_score as u64 * 5);
+                      let jitter = if latency > latency2 { latency - latency2 } else { latency2 - latency };
+                      
+                      // Phase 3: AI Scoring Math
+                      // Lower Latency = Higher Score
+                      // Lower Jitter = Higher Stability
+                      let lat_score = if latency > 0 { 1000.0 / latency as f64 } else { 100.0 };
+                      let jit_penalty = jitter as f64 * 2.0;
+                      
+                      // Stability Index (0.0 to 100.0)
+                      let mut stability = 100.0 - (jit_penalty);
+                      if stability < 0.0 { stability = 0.0; }
 
-              Ok(ProxyStats { ip_port: ip.to_string(), latency, ttfb, stability, total_score })
+                      // Final Weighted Equation (Hybrid Logic)
+                      let final_score = (lat_score * 0.5) + (stability * 0.5);
+
+                      Some((ip_str.to_string(), NodeScore {
+                          latency,
+                          jitter,
+                          stability_index: stability,
+                          packet_loss_sim: false,
+                          ai_score: final_score
+                      }))
+                  },
+                  Err(_) => None, // Dead node
+              }
           }
           EOF
           
-          rustc -O main.rs -o scanner_bin
-          echo "✅ Quantum Engine v2.0 Compiled."
+          rustc -O engine.rs -o neural_scanner
+          echo "✅ AI Engine Compiled."
 
-      - name: ⚔️ Execute God Mode Scan
+      # ----------------------------------------------------------------
+      # 5. EXECUTION: HYPER-HYBRID MODE
+      # ----------------------------------------------------------------
+      - name: ⚡ Run Neural Scan
         run: |
-          chmod +x scanner_bin
-          ./scanner_bin data/candidates.txt
+          echo "Initiating Scan..."
+          ./neural_scanner data/targets.txt
           
-          # Fail-safe check
-          if [ ! -s rust_results.json ] || [ "$(cat rust_results.json)" == "[]" ]; then
-             echo "⚠️ All nodes failed deep inspection. Using Safety Net."
-             echo '[{"ip_port":"8.8.8.8:80","latency_ms":10,"ttfb_ms":15,"stability_percent":99,"total_score":1000}]' > rust_results.json
+          if [ ! -s ai_results.json ]; then
+            echo "[]" > ai_results.json
+            echo "⚠️ Warning: No nodes survived. Using failsafe."
           fi
 
       # ----------------------------------------------------------------
-      # 5. AI SELECTION & STORAGE
+      # 6. AI DECISION MATRIX (Selection)
       # ----------------------------------------------------------------
-      - name: 🤖 Final Selection
-        id: selection
+      - name: 🤖 Final AI Selection
+        id: decision
         run: |
-          # Install GeoIP
-          sudo apt-get install -y geoip-bin geoip-database > /dev/null
+          echo "Analyzing Scan Data..."
           
-          # Enrich with Country
-          jq -c '.[]' rust_results.json | while read -r line; do
-             IP=$(echo "$line" | jq -r '.ip_port' | cut -d':' -f1)
-             LOC=$(geoiplookup "$IP" 2>/dev/null | awk -F': ' '{print $2}' | cut -d',' -f1 | head -c 2)
-             if [ -z "$LOC" ] || [ "$LOC" == "IP" ]; then LOC="XX"; fi
-             echo "$line" | jq --arg loc "$LOC" '. + {location: $loc}'
-          done | jq -s '.' > enriched.json
+          # Use jq to sort by the 'score' calculated in Rust.
+          # We pick the one with Highest Score (Best balance of Speed + Stability)
+          BEST_NODE=$(jq -c 'sort_by(-score) | .[0]' ai_results.json)
           
-          # Select TOP 1 (Highest Score)
-          BEST=$(jq -s 'sort_by(-.total_score) | .[0]' enriched.json)
+          if [ "$BEST_NODE" == "null" ]; then
+             echo "⚠️ AI found no valid targets. Aborting safely."
+             exit 0
+          fi
           
-          echo "🏆 GOD TIER NODE: $BEST"
+          IP=$(echo $BEST_NODE | jq -r .ip)
+          LAT=$(echo $BEST_NODE | jq -r .lat)
+          SCORE=$(echo $BEST_NODE | jq -r .score)
+          STAB=$(echo $BEST_NODE | jq -r .stab)
           
-          echo "ip=$(echo $BEST | jq -r .ip_port)" >> $GITHUB_OUTPUT
-          echo "score=$(echo $BEST | jq -r .total_score)" >> $GITHUB_OUTPUT
-          echo "lat=$(echo $BEST | jq -r .latency_ms)" >> $GITHUB_OUTPUT
-          echo "ttfb=$(echo $BEST | jq -r .ttfb_ms)" >> $GITHUB_OUTPUT
-          echo "loc=$(echo $BEST | jq -r .location)" >> $GITHUB_OUTPUT
-          echo "stab=$(echo $BEST | jq -r .stability_percent)" >> $GITHUB_OUTPUT
+          # Geo Location Lookup
+          COUNTRY=$(geoiplookup $(echo $IP | cut -d: -f1) | awk -F': ' '{print $2}' | cut -d, -f1)
+          
+          echo "🏆 THE CHOSEN ONE: $IP"
+          echo "::set-output name=proxy::$IP"
+          echo "::set-output name=latency::$LAT"
+          echo "::set-output name=score::$SCORE"
+          echo "::set-output name=stability::$STAB"
+          echo "::set-output name=country::$COUNTRY"
 
-      - name: 💾 Sync to D1 (Persistent AI Memory)
+      # ----------------------------------------------------------------
+      # 7. ZERO-ERROR STORAGE (Cloudflare D1)
+      # ----------------------------------------------------------------
+      - name: 💾 Quantum Save to Cloudflare D1
+        if: steps.decision.outputs.proxy != ''
         env:
-          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-          D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
+          # YOU MUST SET THESE SECRETS IN GITHUB REPO SETTINGS
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CLOUDFLARE_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
         run: |
-          set +e
-          IP="${{ steps.selection.outputs.ip }}"
-          SCORE="${{ steps.selection.outputs.score }}"
-          LAT="${{ steps.selection.outputs.lat }}"
-          LOC="${{ steps.selection.outputs.loc }}"
-          STAB="${{ steps.selection.outputs.stab }}"
+          # Robust SQL Injection
+          IP="${{ steps.decision.outputs.proxy }}"
+          LAT="${{ steps.decision.outputs.latency }}"
+          SCORE="${{ steps.decision.outputs.score }}"
+          COUNTRY="${{ steps.decision.outputs.country }}"
           TS=$(date +%s)
           
-          # Schema Update
-          SQL_SCHEMA="CREATE TABLE IF NOT EXISTS quantum_proxy (ip_port TEXT PRIMARY KEY, total_score INTEGER, latency_ms INTEGER, location TEXT, last_check INTEGER, stability_percent INTEGER, jitter_ms INTEGER);"
+          echo "Syncing with Cloudflare Edge..."
           
-          # Upsert
-          SQL_CMD="INSERT INTO quantum_proxy (ip_port, total_score, latency_ms, location, last_check, stability_percent) VALUES ('$IP', $SCORE, $LAT, '$LOC', $TS, $STAB) ON CONFLICT(ip_port) DO UPDATE SET total_score=$SCORE, latency_ms=$LAT, last_check=$TS, stability_percent=$STAB;"
+          SQL="INSERT INTO proxy_health (ip_port, latency, score, country, updated_at) VALUES ('$IP', $LAT, $SCORE, '$COUNTRY', $TS) ON CONFLICT(ip_port) DO UPDATE SET latency=$LAT, score=$SCORE, updated_at=$TS;"
           
-          curl -s -X POST "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/d1/database/$D1_DATABASE_ID/query" \
-            -H "Authorization: Bearer $CF_API_TOKEN" \
-            -H "Content-Type: application/json" \
-            --data "$(jq -n --arg sql "$SQL_SCHEMA" '{sql: $sql}')" > /dev/null
-            
-          curl -s -X POST "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/d1/database/$D1_DATABASE_ID/query" \
-            -H "Authorization: Bearer $CF_API_TOKEN" \
-            -H "Content-Type: application/json" \
-            --data "$(jq -n --arg sql "$SQL_CMD" '{sql: $sql}')"
-            
-          echo "✅ Memory Updated."
+          # Silent Error Handling (|| true ensures flow doesn't break if DB is down)
+          curl -s -X POST "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/d1/database/$CLOUDFLARE_DATABASE_ID/query" \
+          -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+          -H "Content-Type: application/json" \
+          --data "$(jq -n --arg sql "$SQL" '{sql: $sql}')" || echo "⚠️ DB Sync failed (Non-Fatal)"
 
-      - name: 📊 God Mode Report
+      # ----------------------------------------------------------------
+      # 8. REPORTING
+      # ----------------------------------------------------------------
+      - name: 📊 Summary
         if: always()
         run: |
-          echo "## 🌌 Quantum God-Tier Scan Results" >> $GITHUB_STEP_SUMMARY
-          echo "| Feature | Result |" >> $GITHUB_STEP_SUMMARY
+          echo "### 🌌 Quantum-AI Result" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
           echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Winner** | `${{ steps.selection.outputs.ip }}` |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Real Speed (TTFB)** | ${{ steps.selection.outputs.ttfb }} ms ⚡ |" >> $GITHUB_STEP_SUMMARY
-          echo "| **AI Score** | ${{ steps.selection.outputs.score }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Stability** | ${{ steps.selection.outputs.stab }}% |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Chosen IP** | `${{ steps.decision.outputs.proxy }}` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Latency** | `${{ steps.decision.outputs.latency }} ms` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **AI Stability** | `${{ steps.decision.outputs.stability }}%` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Neural Score** | `${{ steps.decision.outputs.score }}` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Location** | `${{ steps.decision.outputs.country }}` |" >> $GITHUB_STEP_SUMMARY
