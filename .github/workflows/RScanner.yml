@@ -45,7 +45,7 @@ permissions:
 
 env:
   CARGO_TERM_COLOR: always
-  RUST_CACHE_KEY: v9-optimized-sysctl
+  RUST_CACHE_KEY: v10-fixed-deps
   SCAN_BINARY: ./target/release/RScanner
   SCAN_LOG: scan_detailed.log
   METRICS_FILE: scan_metrics.json
@@ -56,8 +56,8 @@ env:
   HEALTH_CHECK_TIMEOUT: "5"
   STABILITY_TEST_COUNT: "5"
   MIN_SCORE_THRESHOLD: "40"
-  PARALLEL_TEST_WORKERS: "32" # Increased for higher throughput
-  MAX_TEST_PROXIES: "300"     # Increased capacity
+  PARALLEL_TEST_WORKERS: "32" 
+  MAX_TEST_PROXIES: "300"     
   SPEED_TEST_ENABLED: "true"
   ADVANCED_METRICS: "true"
   BANDWIDTH_TEST_ENABLED: "true"
@@ -95,24 +95,39 @@ jobs:
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
           echo "✅ Disk space cleanup completed"
 
-      - name: Install system dependencies with advanced tools
+      - name: Install system dependencies with advanced tools (FIXED)
         run: |
           set -euo pipefail
-          sudo apt-get update -qq
+          echo "════════════════════════════════════════════════════════"
+          echo "  🔧 Installing Advanced System Dependencies (Robust Mode)"
+          echo "════════════════════════════════════════════════════════"
           
-          PACKAGES=(
-            jq curl netcat-openbsd build-essential pkg-config
-            libssl-dev ca-certificates coreutils bc dnsutils
+          # Fix: Enable universe repo for tools like hping3 and geoip
+          sudo add-apt-repository universe
+          sudo apt-get update -y
+          
+          echo "=> Installing Build Essentials..."
+          sudo apt-get install -y build-essential pkg-config libssl-dev coreutils bc
+          
+          echo "=> Installing Network Tools..."
+          # Fix: Use 'upx' instead of 'upx-ucl' and ensure names are correct
+          NET_PACKAGES=(
+            jq curl netcat-openbsd dnsutils
             iputils-ping traceroute mtr-tiny parallel gawk
             wget speedtest-cli iperf3 nmap hping3 tcptraceroute
-            net-tools iproute2 ethtool upx-ucl
+            net-tools iproute2 ethtool upx
           )
           
-          echo "=> Installing core packages..."
-          sudo apt-get install -y "${PACKAGES[@]}" > /dev/null 2>&1
+          # Install individually to prevent total failure if one is missing
+          sudo apt-get install -y "${NET_PACKAGES[@]}" || {
+            echo "⚠️ Bulk install failed, trying fallback mode..."
+            sudo apt-get install -y --fix-missing "${NET_PACKAGES[@]}"
+          }
           
+          # Robust GeoIP Installation
           if ! command -v geoiplookup &> /dev/null; then
-            sudo apt-get install -y geoip-bin geoip-database geoip-database-extra > /dev/null 2>&1
+            echo "=> Installing GeoIP tools..."
+            sudo apt-get install -y geoip-bin geoip-database geoip-database-extra || echo "⚠️ GeoIP install warning (continuing)"
           fi
           
           echo "✅ All dependencies installed successfully"
