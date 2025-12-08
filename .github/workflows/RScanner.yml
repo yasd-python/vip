@@ -1,4 +1,4 @@
-name: 🌌 Enhanced Quantum-AI Omni-Proxy Evolution System v3.0
+name: 🌌 Ultimate Quantum-AI Omni-Proxy Evolution System v2.2
 
 on:
   workflow_dispatch:
@@ -11,7 +11,6 @@ on:
           - 'quantum_speed'
           - 'ultra_precise'
           - 'hybrid_quantum_ultra'
-          - 'deep_analysis'
       target_count:
         description: 'Maximum proxies to scan'
         default: '2000'
@@ -20,27 +19,11 @@ on:
         description: 'Minimum acceptable score'
         default: '500'
         type: string
-      preferred_locations:
-        description: 'Preferred locations (comma-separated country codes, e.g., US,GB,DE)'
-        default: ''
-        type: string
-      port_range_min:
-        description: 'Minimum port number'
-        default: '80'
-        type: string
-      port_range_max:
-        description: 'Maximum port number'
-        default: '65535'
-        type: string
-      enable_geo_diversity:
-        description: 'Enable geographic diversity mode'
-        default: true
-        type: boolean
   schedule:
     - cron: '0 */2 * * *'
 
 concurrency:
-  group: quantum-omni-ultimate-v3
+  group: quantum-omni-ultimate
   cancel-in-progress: true
 
 permissions:
@@ -50,11 +33,10 @@ permissions:
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
-  WEIGHT_LATENCY: "0.30"
+  WEIGHT_LATENCY: "0.35"
   WEIGHT_STABILITY: "0.25" 
-  WEIGHT_TTFB: "0.25"
+  WEIGHT_TTFB: "0.30"
   WEIGHT_JITTER: "0.10"
-  WEIGHT_LOCATION: "0.10"
   MAX_LATENCY_MS: "300"
   MAX_TTFB_MS: "500"
   OPTIMAL_LATENCY_MS: "80"
@@ -62,9 +44,9 @@ env:
 
 jobs:
   quantum-neural-ultimate-evolution:
-    name: 🧠 Enhanced AI-Driven Proxy Evolution Engine v3.0
+    name: 🧠 Ultimate AI-Driven Proxy Evolution Engine
     runs-on: ubuntu-latest
-    timeout-minutes: 240
+    timeout-minutes: 180
 
     steps:
       - name: 📥 Initialize Quantum Repository
@@ -72,24 +54,20 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: 🔍 Environment Validation & Enhanced Setup
+      - name: 🔍 Environment Validation & Setup
         run: |
           echo "🌟 =========================================="
-          echo "🌟 ENHANCED QUANTUM-AI PROXY SYSTEM v3.0"
+          echo "🌟 QUANTUM-AI PROXY EVOLUTION SYSTEM v2.2"
           echo "🌟 =========================================="
           echo ""
-          echo "📊 Enhanced Configuration Matrix:"
+          echo "📊 Configuration Matrix:"
           echo "  • Scan Mode: ${{ github.event.inputs.scan_mode || 'hybrid_quantum_ultra' }}"
           echo "  • Target Count: ${{ github.event.inputs.target_count || '2000' }}"
           echo "  • Min Score: ${{ github.event.inputs.min_score_threshold || '500' }}"
-          echo "  • Port Range: ${{ github.event.inputs.port_range_min || '80' }}-${{ github.event.inputs.port_range_max || '65535' }}"
-          echo "  • Preferred Locations: ${{ github.event.inputs.preferred_locations || 'Auto' }}"
-          echo "  • Geo Diversity: ${{ github.event.inputs.enable_geo_diversity || 'true' }}"
           echo "  • Latency Weight: $WEIGHT_LATENCY"
           echo "  • TTFB Weight: $WEIGHT_TTFB"
           echo "  • Stability Weight: $WEIGHT_STABILITY"
           echo "  • Jitter Weight: $WEIGHT_JITTER"
-          echo "  • Location Weight: $WEIGHT_LOCATION"
           echo ""
           
           if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ]; then
@@ -99,7 +77,7 @@ jobs:
             echo "✅ D1 Database integration enabled"
           fi
           
-          mkdir -p data results logs cache geo_data
+          mkdir -p data results logs cache
           
           echo ""
           echo "🖥️  System Resources:"
@@ -146,9 +124,9 @@ jobs:
           
           echo "✅ Kernel operating at maximum available performance"
 
-      - name: 🛠️ Install Advanced Computational Tools with GeoIP
+      - name: 🛠️ Install Advanced Computational Tools
         run: |
-          echo "📦 Installing high-performance toolchain with geographic capabilities..."
+          echo "📦 Installing high-performance toolchain..."
           
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends \
@@ -171,29 +149,21 @@ jobs:
             pkg-config \
             mtr-tiny \
             nmap \
-            httping \
-            whois 2>/dev/null || true
+            httping 2>/dev/null || true
           
-          # Install enhanced GeoIP databases
-          sudo apt-get install -y geoipupdate 2>/dev/null || true
+          pip3 install --quiet numpy scipy 2>/dev/null || echo "ℹ️  Python analytics libraries are optional"
           
-          pip3 install --quiet numpy scipy requests 2>/dev/null || echo "ℹ️  Python analytics libraries are optional"
-          
-          # Download additional GeoIP data
-          wget -q -O geo_data/country_codes.txt "https://raw.githubusercontent.com/lukes/ISO-3166-Countries-with-Regional-Codes/master/all/all.csv" 2>/dev/null || true
-          
-          echo "✅ Advanced toolchain with geographic intelligence loaded"
+          echo "✅ Advanced toolchain loaded and ready"
 
-      - name: 🧠 AI Deep Memory Recall with Location Intelligence
+      - name: 🧠 AI Deep Memory Recall from D1 Database
         id: memory_recall
         continue-on-error: true
         env:
           CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
-          PREFERRED_LOCS: ${{ github.event.inputs.preferred_locations }}
         run: |
-          echo "🔍 Accessing Long-Term AI Memory with Geographic Intelligence..."
+          echo "🔍 Accessing Long-Term AI Memory (Cloudflare D1)..."
           
           if [ -z "$CF_API_TOKEN" ]; then
             echo "⚠️  D1 not configured, using fresh scan only"
@@ -203,26 +173,7 @@ jobs:
           fi
           
           CUTOFF_TIME=$(date -d '48 hours ago' +%s 2>/dev/null || echo "0")
-          
-          # Build location filter if specified
-          LOC_FILTER=""
-          if [ -n "$PREFERRED_LOCS" ]; then
-            IFS=',' read -ra LOCS <<< "$PREFERRED_LOCS"
-            LOC_CONDITIONS=""
-            for loc in "${LOCS[@]}"; do
-              loc=$(echo "$loc" | xargs | tr '[:lower:]' '[:upper:]')
-              if [ -n "$LOC_CONDITIONS" ]; then
-                LOC_CONDITIONS="$LOC_CONDITIONS OR location LIKE '$loc%'"
-              else
-                LOC_CONDITIONS="location LIKE '$loc%'"
-              fi
-            done
-            if [ -n "$LOC_CONDITIONS" ]; then
-              LOC_FILTER=" AND ($LOC_CONDITIONS)"
-            fi
-          fi
-          
-          SQL_QUERY="SELECT ip_port, total_score, latency_ms, ttfb_ms, location, success_rate, geo_country, geo_region, geo_city FROM proxy_health WHERE is_healthy=1 AND last_check > $CUTOFF_TIME$LOC_FILTER ORDER BY (total_score * success_rate) DESC LIMIT 150;"
+          SQL_QUERY="SELECT ip_port, total_score, latency_ms, ttfb_ms, location, success_rate FROM proxy_health WHERE is_healthy=1 AND last_check > $CUTOFF_TIME ORDER BY (total_score * success_rate) DESC LIMIT 100;"
           
           RESPONSE=$(curl -s --max-time 10 -X POST \
             "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/d1/database/$D1_DATABASE_ID/query" \
@@ -236,20 +187,16 @@ jobs:
             echo "✅ AI Successfully Recalled $MEM_COUNT high-performance nodes from history"
             echo "memory_count=$MEM_COUNT" >> $GITHUB_OUTPUT
             
-            echo "$RESPONSE" | jq -r '.result[0].results[]? | "\(.ip_port)|\(.total_score)|\(.location)"' > cache/historical_scores.txt 2>/dev/null || true
+            echo "$RESPONSE" | jq -r '.result[0].results[]? | "\(.ip_port)|\(.total_score)"' > cache/historical_scores.txt 2>/dev/null || true
           else
             echo "⚠️  D1 query returned no results, proceeding with fresh scan"
             touch data/memory_proxies.txt
             echo "memory_count=0" >> $GITHUB_OUTPUT
           fi
 
-      - name: 🌐 Advanced Global Proxy Harvesting with Port Randomization
-        env:
-          PORT_MIN: ${{ github.event.inputs.port_range_min || '80' }}
-          PORT_MAX: ${{ github.event.inputs.port_range_max || '65535' }}
+      - name: 🌐 Advanced Global Proxy Harvesting
         run: |
-          echo "📡 Initiating enhanced global proxy spectrum scan..."
-          echo "🎲 Port randomization range: $PORT_MIN-$PORT_MAX"
+          echo "📡 Initiating global proxy spectrum scan..."
           
           declare -a SOURCES=(
             "https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/http.txt"
@@ -263,9 +210,6 @@ jobs:
             "https://api.proxyscrape.com/v2/?request=get&protocol=http&timeout=10000&country=all&simplified=true"
             "https://www.proxy-list.download/api/v1/get?type=http"
             "https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt"
-            "https://raw.githubusercontent.com/mmpx12/proxy-list/master/http.txt"
-            "https://raw.githubusercontent.com/almroot/proxylist/master/list.txt"
-            "https://raw.githubusercontent.com/sunny9577/proxy-scraper/master/proxies.txt"
           )
           
           echo "🔄 Fetching from ${#SOURCES[@]} global sources..."
@@ -280,7 +224,7 @@ jobs:
           export -f fetch_source
           
           if command -v parallel &> /dev/null; then
-            printf "%s\n" "${SOURCES[@]}" | parallel -j 10 "fetch_source {} data/fresh_proxies.txt"
+            printf "%s\n" "${SOURCES[@]}" | parallel -j 8 "fetch_source {} data/fresh_proxies.txt"
           else
             for src in "${SOURCES[@]}"; do
               fetch_source "$src" "data/fresh_proxies.txt"
@@ -290,85 +234,55 @@ jobs:
           FRESH_COUNT=$(wc -l < data/fresh_proxies.txt 2>/dev/null || echo "0")
           echo "✅ Raw data collected: $FRESH_COUNT entries"
           
-          # Combine memory and fresh proxies
           cat data/memory_proxies.txt data/fresh_proxies.txt > data/raw_combined.txt 2>/dev/null || touch data/raw_combined.txt
           
-          # Enhanced extraction with port randomization
-          echo "🎲 Applying intelligent port randomization..."
-          
           grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]{1,5}" data/raw_combined.txt 2>/dev/null | \
-            awk -F':' -v min="$PORT_MIN" -v max="$PORT_MAX" '$2 >= min && $2 <= max' | \
-            sort -u > data/filtered_ports.txt
+            awk -F':' '$2 > 0 && $2 < 65536' | \
+            sort -u | \
+            shuf | \
+            head -n ${{ github.event.inputs.target_count || '2000' }} > data/targets.txt
           
-          # Generate random port variations for discovered IPs
-          awk -F':' '{print $1}' data/filtered_ports.txt | sort -u | while read ip; do
-            # Keep original port
-            grep "^$ip:" data/filtered_ports.txt
-            
-            # Add randomized common ports if within range
-            for port in 80 8080 3128 8888 8118 9050 9051 1080 1081 8081; do
-              if [ $port -ge $PORT_MIN ] && [ $port -le $PORT_MAX ]; then
-                if [ $((RANDOM % 3)) -eq 0 ]; then
-                  echo "$ip:$port"
-                fi
-              fi
-            done
-            
-            # Add truly random ports (10% chance per IP)
-            if [ $((RANDOM % 10)) -eq 0 ]; then
-              RAND_PORT=$((PORT_MIN + RANDOM % (PORT_MAX - PORT_MIN + 1)))
-              echo "$ip:$RAND_PORT"
-            fi
-          done | shuf | head -n ${{ github.event.inputs.target_count || '2000' }} > data/targets.txt
-          
-          # Clean invalid addresses
-          sed -i '/^0\.0\.0\.0/d; /^127\./d; /^255\./d; /^169\.254\./d; /^224\./d; /^10\./d; /^172\.1[6-9]\./d; /^172\.2[0-9]\./d; /^172\.3[0-1]\./d; /^192\.168\./d' data/targets.txt 2>/dev/null || true
+          sed -i '/^0\.0\.0\.0/d; /^127\./d; /^255\./d; /^169\.254\./d; /^224\./d' data/targets.txt 2>/dev/null || true
           
           TARGET_COUNT=$(wc -l < data/targets.txt 2>/dev/null || echo "0")
           echo "✅ Target acquisition complete: $TARGET_COUNT unique candidates"
           
           if [ "$TARGET_COUNT" -lt 10 ]; then
-            echo "⚠️  Low target count, injecting diversified failsafe nodes"
+            echo "⚠️  Low target count, injecting failsafe nodes"
             cat >> data/targets.txt << 'FAILSAFE'
           8.8.8.8:80
           1.1.1.1:80
-          8.8.4.4:8080
-          208.67.222.222:80
           FAILSAFE
           fi
           
           echo ""
-          echo "📊 Enhanced Harvesting Statistics:"
+          echo "📊 Harvesting Statistics:"
           echo "  • Raw entries collected: $(wc -l < data/raw_combined.txt 2>/dev/null || echo '0')"
-          echo "  • After port filtering: $(wc -l < data/filtered_ports.txt 2>/dev/null || echo '0')"
-          echo "  • With randomization: $(wc -l < data/targets.txt 2>/dev/null || echo '0')"
+          echo "  • After deduplication: $(sort -u data/raw_combined.txt 2>/dev/null | wc -l || echo '0')"
+          echo "  • Final targets: $(wc -l < data/targets.txt 2>/dev/null || echo '0')"
           echo "  • Memory proxies included: $(wc -l < data/memory_proxies.txt 2>/dev/null || echo '0')"
-          echo "  • Port range: $PORT_MIN-$PORT_MAX"
 
       - name: 🦀 Setup Advanced Rust Toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
 
-      - name: ⚡ Build Enhanced Quantum Scanner with GeoLocation
+      - name: ⚡ Build Ultimate Quantum Scanner Engine
         run: |
-          echo "⚙️  Generating advanced Rust scanner with geographic intelligence..."
+          echo "⚙️  Generating advanced Rust scanner with multi-dimensional analysis..."
           
           cat > main.rs << 'RUST_ENGINE_EOF'
           use std::env;
           use std::fs::File;
           use std::io::{BufRead, BufReader, Read, Write};
-          use std::net::{TcpStream, SocketAddr, IpAddr};
+          use std::net::{TcpStream, SocketAddr};
           use std::time::{Duration, Instant};
           use std::thread;
           use std::sync::{Arc, Mutex};
-          use std::process::Command;
 
           #[derive(Clone, Debug)]
           struct ProxyNode {
               ip_port: String,
-              ip_address: String,
-              port: u16,
               tcp_latency: u128,
               ttfb: u128,
               jitter: u128,
@@ -377,12 +291,6 @@ jobs:
               response_code: u16,
               total_tests: u8,
               passed_tests: u8,
-              geo_country: String,
-              geo_region: String,
-              geo_city: String,
-              geo_latitude: f32,
-              geo_longitude: f32,
-              location_score: u32,
               final_score: u64,
           }
 
@@ -391,13 +299,12 @@ jobs:
               QuantumSpeed,
               UltraPrecise,
               HybridQuantumUltra,
-              DeepAnalysis,
           }
 
           fn main() {
               let args: Vec<String> = env::args().collect();
               if args.len() < 3 {
-                  eprintln!("Usage: {} <input_file> <scan_mode> [preferred_countries]", args[0]);
+                  eprintln!("Usage: {} <input_file> <scan_mode>", args[0]);
                   std::process::exit(1);
               }
               
@@ -405,21 +312,11 @@ jobs:
               let scan_mode = match args[2].as_str() {
                   "quantum_speed" => ScanMode::QuantumSpeed,
                   "ultra_precise" => ScanMode::UltraPrecise,
-                  "deep_analysis" => ScanMode::DeepAnalysis,
                   _ => ScanMode::HybridQuantumUltra,
               };
               
-              let preferred_countries: Vec<String> = if args.len() > 3 {
-                  args[3].split(',').map(|s| s.trim().to_uppercase()).collect()
-              } else {
-                  Vec::new()
-              };
-              
-              println!("🚀 Enhanced Quantum Scanner Engine v3.0 Initialized");
+              println!("🚀 Quantum Scanner Engine Initialized");
               println!("📊 Mode: {:?}", scan_mode);
-              if !preferred_countries.is_empty() {
-                  println!("🌍 Preferred Locations: {:?}", preferred_countries);
-              }
               
               let file = File::open(filename).expect("Cannot open input file");
               let reader = BufReader::new(file);
@@ -433,23 +330,19 @@ jobs:
               let (chunk_size, threads) = match scan_mode {
                   ScanMode::QuantumSpeed => (8, 128),
                   ScanMode::UltraPrecise => (1, 32),
-                  ScanMode::DeepAnalysis => (2, 48),
                   ScanMode::HybridQuantumUltra => (4, 64),
               };
               
               let total_chunks = (proxies.len() + chunk_size - 1) / chunk_size;
               println!("⚙️  Spawning {} worker threads with chunk size {}", threads.min(total_chunks), chunk_size);
               
-              let pref_countries = Arc::new(preferred_countries);
-              
               for chunk in proxies.chunks(chunk_size) {
                   let chunk = chunk.to_vec();
                   let results = Arc::clone(&results);
-                  let pref_countries = Arc::clone(&pref_countries);
                   
                   let handle = thread::spawn(move || {
                       for proxy in chunk {
-                          let stats = evaluate_proxy_ultimate(&proxy, scan_mode, &pref_countries);
+                          let stats = evaluate_proxy_ultimate(&proxy, scan_mode);
                           if stats.success && stats.final_score > 0 {
                               let mut data = results.lock().unwrap();
                               data.push(stats);
@@ -477,23 +370,11 @@ jobs:
               
               write_results(&data, "quantum_results.json");
               write_detailed_log(&data, "logs/detailed_results.txt");
-              write_geo_report(&data, "results/geo_distribution.json");
               
-              println!("💾 Results saved with geographic intelligence");
+              println!("💾 Results saved to quantum_results.json");
           }
 
-          fn evaluate_proxy_ultimate(ip: &str, mode: ScanMode, pref_countries: &[String]) -> ProxyNode {
-              let parts: Vec<&str> = ip.split(':').collect();
-              if parts.len() != 2 {
-                  return create_failed_node(ip);
-              }
-              
-              let ip_addr = parts[0];
-              let port: u16 = match parts[1].parse() {
-                  Ok(p) => p,
-                  Err(_) => return create_failed_node(ip),
-              };
-              
+          fn evaluate_proxy_ultimate(ip: &str, mode: ScanMode) -> ProxyNode {
               let addr_result = ip.parse::<SocketAddr>();
               if addr_result.is_err() {
                   return create_failed_node(ip);
@@ -503,7 +384,6 @@ jobs:
               let test_rounds: u8 = match mode {
                   ScanMode::QuantumSpeed => 1,
                   ScanMode::UltraPrecise => 3,
-                  ScanMode::DeepAnalysis => 4,
                   ScanMode::HybridQuantumUltra => 2,
               };
               
@@ -527,7 +407,7 @@ jobs:
                   }
                   
                   if mode as i32 >= ScanMode::UltraPrecise as i32 && round < test_rounds - 1 {
-                      thread::sleep(Duration::from_millis(150));
+                      thread::sleep(Duration::from_millis(100));
                   }
               }
               
@@ -541,33 +421,16 @@ jobs:
               let jitter = calculate_jitter(&latencies);
               let stability = calculate_stability(passed, test_rounds);
               
-              // Get geographic information
-              let (country, region, city, lat, lon) = get_geo_info(ip_addr);
-              
-              // Calculate location bonus
-              let location_score = if !pref_countries.is_empty() {
-                  if pref_countries.contains(&country.to_uppercase()) {
-                      100
-                  } else {
-                      50
-                  }
-              } else {
-                  75  // Neutral score
-              };
-              
               let final_score = calculate_ultimate_score(
                   avg_latency,
                   avg_ttfb,
                   jitter,
                   stability,
                   response_code,
-                  location_score,
               );
               
               ProxyNode {
                   ip_port: ip.to_string(),
-                  ip_address: ip_addr.to_string(),
-                  port,
                   tcp_latency: avg_latency,
                   ttfb: avg_ttfb,
                   jitter,
@@ -576,12 +439,6 @@ jobs:
                   response_code,
                   total_tests: test_rounds,
                   passed_tests: passed,
-                  geo_country: country,
-                  geo_region: region,
-                  geo_city: city,
-                  geo_latitude: lat,
-                  geo_longitude: lon,
-                  location_score,
                   final_score,
               }
           }
@@ -590,7 +447,6 @@ jobs:
               let timeout = match mode {
                   ScanMode::QuantumSpeed => Duration::from_secs(2),
                   ScanMode::UltraPrecise => Duration::from_secs(5),
-                  ScanMode::DeepAnalysis => Duration::from_secs(6),
                   ScanMode::HybridQuantumUltra => Duration::from_secs(3),
               };
               
@@ -609,8 +465,8 @@ jobs:
               
               let request = "HEAD http://www.google.com/ HTTP/1.1\r\n\
                              Host: www.google.com\r\n\
-                             User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36\r\n\
-                             Proxy-Connection: keep-alive\r\n\
+                             User-Agent: Mozilla/5.0\r\n\
+                             Proxy-Connection: close\r\n\
                              Connection: close\r\n\r\n";
               
               let start_ttfb = Instant::now();
@@ -618,7 +474,7 @@ jobs:
                   return Err("Write failed".to_string());
               }
               
-              let mut buffer = vec![0u8; 2048];
+              let mut buffer = vec![0u8; 1024];
               let read_result = stream.read(&mut buffer);
               let ttfb_time = start_ttfb.elapsed().as_millis();
               
@@ -637,65 +493,20 @@ jobs:
               }
           }
 
-          fn get_geo_info(ip: &str) -> (String, String, String, f32, f32) {
-              // Try to use system geoiplookup command
-              let output = Command::new("geoiplookup")
-                  .arg(ip)
-                  .output();
-              
-              if let Ok(output) = output {
-                  if output.status.success() {
-                      let result = String::from_utf8_lossy(&output.stdout);
-                      let country = result
-                          .lines()
-                          .find(|line| line.contains("Country"))
-                          .and_then(|line| line.split(":").nth(1))
-                          .map(|s| s.trim().split(",").next().unwrap_or("").to_string())
-                          .unwrap_or_else(|| "Unknown".to_string());
-                      
-                      return (country, "Unknown".to_string(), "Unknown".to_string(), 0.0, 0.0);
-                  }
-              }
-              
-              // Try whois as fallback
-              let output = Command::new("whois")
-                  .arg(ip)
-                  .output();
-              
-              if let Ok(output) = output {
-                  if output.status.success() {
-                      let result = String::from_utf8_lossy(&output.stdout);
-                      let country = result
-                          .lines()
-                          .find(|line| line.to_lowercase().contains("country:"))
-                          .and_then(|line| line.split(":").last())
-                          .map(|s| s.trim().to_string())
-                          .unwrap_or_else(|| "Unknown".to_string());
-                      
-                      return (country, "Unknown".to_string(), "Unknown".to_string(), 0.0, 0.0);
-                  }
-              }
-              
-              ("Unknown".to_string(), "Unknown".to_string(), "Unknown".to_string(), 0.0, 0.0)
-          }
-
           fn calculate_ultimate_score(
               latency: u128,
               ttfb: u128,
               jitter: u128,
               stability: u32,
               response_code: u16,
-              location_score: u32,
           ) -> u64 {
               let total_time = latency + ttfb;
               if total_time == 0 {
                   return 0;
               }
               
-              // Base score from speed
               let mut score = (1_000_000 / total_time as u64).min(100_000);
               
-              // Latency bonuses
               if latency < 50 {
                   score += 5000;
               } else if latency < 100 {
@@ -704,7 +515,6 @@ jobs:
                   score += 500;
               }
               
-              // TTFB bonuses
               if ttfb < 100 {
                   score += 4000;
               } else if ttfb < 200 {
@@ -713,25 +523,19 @@ jobs:
                   score += 300;
               }
               
-              // Stability multiplier
               score = (score * stability as u64) / 100;
               
-              // Jitter penalty
               if jitter > 100 {
                   score = (score * 70) / 100;
               } else if jitter > 50 {
                   score = (score * 85) / 100;
               }
               
-              // HTTP response code bonus
               match response_code {
                   200 => score += 1000,
                   301 | 302 => score += 500,
                   _ => {}
               }
-              
-              // Geographic location bonus
-              score = (score * (100 + location_score) as u64) / 100;
               
               score.min(999_999)
           }
@@ -778,17 +582,8 @@ jobs:
           }
           
           fn create_failed_node(ip: &str) -> ProxyNode {
-              let parts: Vec<&str> = ip.split(':').collect();
-              let (ip_addr, port) = if parts.len() == 2 {
-                  (parts[0].to_string(), parts[1].parse().unwrap_or(0))
-              } else {
-                  (ip.to_string(), 0)
-              };
-              
               ProxyNode {
                   ip_port: ip.to_string(),
-                  ip_address: ip_addr,
-                  port,
                   tcp_latency: 9999,
                   ttfb: 9999,
                   jitter: 9999,
@@ -797,12 +592,6 @@ jobs:
                   response_code: 0,
                   total_tests: 0,
                   passed_tests: 0,
-                  geo_country: "Unknown".to_string(),
-                  geo_region: "Unknown".to_string(),
-                  geo_city: "Unknown".to_string(),
-                  geo_latitude: 0.0,
-                  geo_longitude: 0.0,
-                  location_score: 0,
                   final_score: 0,
               }
           }
@@ -817,10 +606,8 @@ jobs:
                   }
                   write!(
                       file,
-                      "{{\"ip_port\":\"{}\",\"ip\":\"{}\",\"port\":{},\"latency\":{},\"ttfb\":{},\"jitter\":{},\"stability\":{},\"response_code\":{},\"tests\":\"{}/{}\",\"country\":\"{}\",\"region\":\"{}\",\"city\":\"{}\",\"latitude\":{},\"longitude\":{},\"location_score\":{},\"score\":{}}}",
+                      "{{\"ip_port\":\"{}\",\"latency\":{},\"ttfb\":{},\"jitter\":{},\"stability\":{},\"response_code\":{},\"tests\":\"{}/{}\",\"score\":{}}}",
                       node.ip_port,
-                      node.ip_address,
-                      node.port,
                       node.tcp_latency,
                       node.ttfb,
                       node.jitter,
@@ -828,12 +615,6 @@ jobs:
                       node.response_code,
                       node.passed_tests,
                       node.total_tests,
-                      node.geo_country,
-                      node.geo_region,
-                      node.geo_city,
-                      node.geo_latitude,
-                      node.geo_longitude,
-                      node.location_score,
                       node.final_score
                   ).unwrap();
               }
@@ -843,64 +624,23 @@ jobs:
           
           fn write_detailed_log(data: &[ProxyNode], filename: &str) {
               let mut file = File::create(filename).expect("Cannot create log file");
-              writeln!(file, "=== ENHANCED QUANTUM PROXY SCANNER v3.0 - DETAILED RESULTS ===\n").unwrap();
+              writeln!(file, "=== QUANTUM PROXY SCANNER - DETAILED RESULTS ===\n").unwrap();
               writeln!(file, "Total Viable Proxies: {}\n", data.len()).unwrap();
               
               for (i, node) in data.iter().enumerate() {
                   writeln!(file, "Rank #{}: {}", i + 1, node.ip_port).unwrap();
-                  writeln!(file, "  IP Address: {}", node.ip_address).unwrap();
-                  writeln!(file, "  Port: {}", node.port).unwrap();
                   writeln!(file, "  Score: {}", node.final_score).unwrap();
                   writeln!(file, "  Latency: {}ms", node.tcp_latency).unwrap();
                   writeln!(file, "  TTFB: {}ms", node.ttfb).unwrap();
                   writeln!(file, "  Jitter: {}ms", node.jitter).unwrap();
                   writeln!(file, "  Stability: {}%", node.stability_score).unwrap();
                   writeln!(file, "  HTTP Code: {}", node.response_code).unwrap();
-                  writeln!(file, "  Tests Passed: {}/{}", node.passed_tests, node.total_tests).unwrap();
-                  writeln!(file, "  Country: {}", node.geo_country).unwrap();
-                  writeln!(file, "  Region: {}", node.geo_region).unwrap();
-                  writeln!(file, "  City: {}", node.geo_city).unwrap();
-                  writeln!(file, "  Location Score: {}\n", node.location_score).unwrap();
+                  writeln!(file, "  Tests Passed: {}/{}\n", node.passed_tests, node.total_tests).unwrap();
               }
-          }
-          
-          fn write_geo_report(data: &[ProxyNode], filename: &str) {
-              use std::collections::HashMap;
-              
-              let mut country_stats: HashMap<String, Vec<u64>> = HashMap::new();
-              
-              for node in data {
-                  country_stats
-                      .entry(node.geo_country.clone())
-                      .or_insert_with(Vec::new)
-                      .push(node.final_score);
-              }
-              
-              let mut file = File::create(filename).expect("Cannot create geo report");
-              write!(file, "{{\"geographic_distribution\":[").unwrap();
-              
-              let mut first = true;
-              for (country, scores) in country_stats.iter() {
-                  if !first {
-                      write!(file, ",").unwrap();
-                  }
-                  first = false;
-                  
-                  let count = scores.len();
-                  let avg_score = scores.iter().sum::<u64>() / count as u64;
-                  
-                  write!(
-                      file,
-                      "{{\"country\":\"{}\",\"count\":{},\"avg_score\":{}}}",
-                      country, count, avg_score
-                  ).unwrap();
-              }
-              
-              write!(file, "]}}").unwrap();
           }
           RUST_ENGINE_EOF
           
-          echo "✅ Enhanced Rust engine with geographic intelligence generated"
+          echo "✅ Advanced Rust engine source generated"
           echo ""
           echo "🔨 Compiling with maximum optimization flags..."
           
@@ -918,32 +658,26 @@ jobs:
           fi
           
           chmod +x quantum_scanner
-          echo "✅ Enhanced Quantum Scanner compiled successfully"
+          echo "✅ Quantum Scanner compiled successfully"
           
           ls -lh quantum_scanner
           echo ""
 
-      - name: ⚔️ Execute Enhanced Multi-Mode Quantum Scan
-        env:
-          PREFERRED_LOCS: ${{ github.event.inputs.preferred_locations }}
+      - name: ⚔️ Execute Multi-Mode Quantum Scan
         run: |
           SCAN_MODE="${{ github.event.inputs.scan_mode || 'hybrid_quantum_ultra' }}"
-          echo "🎯 Initiating $SCAN_MODE scanning protocol with geographic intelligence..."
+          echo "🎯 Initiating $SCAN_MODE scanning protocol..."
           echo ""
           
           START_TIME=$(date +%s)
           
-          if [ -n "$PREFERRED_LOCS" ]; then
-            ./quantum_scanner data/targets.txt "$SCAN_MODE" "$PREFERRED_LOCS" 2>&1 | tee logs/scanner_output.txt
-          else
-            ./quantum_scanner data/targets.txt "$SCAN_MODE" 2>&1 | tee logs/scanner_output.txt
-          fi
+          ./quantum_scanner data/targets.txt "$SCAN_MODE" 2>&1 | tee logs/scanner_output.txt
           
           END_TIME=$(date +%s)
           DURATION=$((END_TIME - START_TIME))
           
           echo ""
-          echo "✅ Enhanced quantum scan completed in ${DURATION} seconds"
+          echo "✅ Quantum scan completed in ${DURATION} seconds"
           
           if [ ! -s quantum_results.json ]; then
             echo "⚠️  No results generated, creating empty result set"
@@ -951,15 +685,14 @@ jobs:
           fi
           
           RESULT_COUNT=$(jq '. | length' quantum_results.json 2>/dev/null || echo "0")
-          echo "📊 Generated $RESULT_COUNT viable proxy candidates with full geographic data"
+          echo "📊 Generated $RESULT_COUNT viable proxy candidates"
 
-      - name: 🤖 Enhanced Neural Selection with Geographic Intelligence
+      - name: 🤖 Advanced Neural Selection Engine
         id: neural_selection
         env:
           MIN_SCORE: ${{ github.event.inputs.min_score_threshold || '500' }}
-          ENABLE_GEO_DIVERSITY: ${{ github.event.inputs.enable_geo_diversity || 'true' }}
         run: |
-          echo "🧮 Activating enhanced multi-dimensional neural analysis with geographic intelligence..."
+          echo "🧮 Activating multi-dimensional neural analysis..."
           
           RESULT_COUNT=$(jq '. | length' quantum_results.json 2>/dev/null || echo "0")
           
@@ -971,12 +704,9 @@ jobs:
             BEST_TTFB=0
             BEST_JITTER=0
             BEST_STABILITY=0
-            BEST_COUNTRY="XX"
-            BEST_REGION="Unknown"
-            BEST_CITY="Unknown"
-            BEST_PORT=8080
+            BEST_LOC="XX"
           else
-            echo "🎯 Analyzing $RESULT_COUNT candidates with geographic intelligence..."
+            echo "🎯 Analyzing $RESULT_COUNT candidates..."
             
             FILTERED=$(jq --arg min "$MIN_SCORE" '[.[] | select(.score >= ($min | tonumber))]' quantum_results.json 2>/dev/null || echo "[]")
             FILTERED_COUNT=$(echo "$FILTERED" | jq '. | length' 2>/dev/null || echo "0")
@@ -988,18 +718,7 @@ jobs:
               FILTERED=$(jq '.' quantum_results.json 2>/dev/null || echo "[]")
             fi
             
-            # Geographic diversity selection if enabled
-            if [ "$ENABLE_GEO_DIVERSITY" = "true" ] && [ "$FILTERED_COUNT" -gt 10 ]; then
-              echo "🌍 Applying geographic diversity optimization..."
-              BEST_NODE=$(echo "$FILTERED" | jq -c '
-                group_by(.country) | 
-                map(sort_by(-.score) | .[0]) | 
-                sort_by(-.score) | 
-                .[0]
-              ' 2>/dev/null || echo "{}")
-            else
-              BEST_NODE=$(echo "$FILTERED" | jq -c 'sort_by(-.score) | .[0]' 2>/dev/null || echo "{}")
-            fi
+            BEST_NODE=$(echo "$FILTERED" | jq -c 'sort_by(-.score) | .[0]' 2>/dev/null || echo "{}")
             
             BEST_IP=$(echo "$BEST_NODE" | jq -r '.ip_port // "127.0.0.1:8080"' 2>/dev/null)
             BEST_SCORE=$(echo "$BEST_NODE" | jq -r '.score // 0' 2>/dev/null)
@@ -1007,41 +726,27 @@ jobs:
             BEST_TTFB=$(echo "$BEST_NODE" | jq -r '.ttfb // 0' 2>/dev/null)
             BEST_JITTER=$(echo "$BEST_NODE" | jq -r '.jitter // 0' 2>/dev/null)
             BEST_STABILITY=$(echo "$BEST_NODE" | jq -r '.stability // 0' 2>/dev/null)
-            BEST_COUNTRY=$(echo "$BEST_NODE" | jq -r '.country // "XX"' 2>/dev/null)
-            BEST_REGION=$(echo "$BEST_NODE" | jq -r '.region // "Unknown"' 2>/dev/null)
-            BEST_CITY=$(echo "$BEST_NODE" | jq -r '.city // "Unknown"' 2>/dev/null)
-            BEST_PORT=$(echo "$BEST_NODE" | jq -r '.port // 8080' 2>/dev/null)
             
-            # Save top performers with geographic diversity
-            echo "$FILTERED" | jq -c '
-              group_by(.country) | 
-              map(sort_by(-.score) | .[0]) | 
-              sort_by(-.score) | 
-              .[:15]
-            ' > results/top_diverse_proxies.json 2>/dev/null || echo "[]" > results/top_diverse_proxies.json
+            CLEAN_IP=$(echo "$BEST_IP" | cut -d':' -f1)
+            BEST_LOC=$(geoiplookup "$CLEAN_IP" 2>/dev/null | awk -F': ' '{print $2}' | cut -d',' -f1 | head -c 2 || echo "XX")
+            if [ -z "$BEST_LOC" ] || [ "$BEST_LOC" == "IP" ]; then
+              BEST_LOC="XX"
+            fi
             
-            echo "$FILTERED" | jq -c 'sort_by(-.score) | .[:20]' > results/top20_proxies.json 2>/dev/null || echo "[]" > results/top20_proxies.json
+            echo "$FILTERED" | jq -c 'sort_by(-.score) | .[:10]' > results/top10_proxies.json 2>/dev/null || echo "[]" > results/top10_proxies.json
             
             echo ""
-            echo "🏆 =================================================="
+            echo "🏆 =============================================="
             echo "🏆 ULTIMATE CHAMPION PROXY SELECTED"
-            echo "🏆 =================================================="
+            echo "🏆 =============================================="
             echo "   IP:Port: $BEST_IP"
-            echo "   Port Number: $BEST_PORT"
             echo "   Neural Score: $BEST_SCORE"
             echo "   Latency: ${BEST_LAT}ms"
             echo "   TTFB: ${BEST_TTFB}ms"
             echo "   Jitter: ${BEST_JITTER}ms"
             echo "   Stability: ${BEST_STABILITY}%"
-            echo "   Country: $BEST_COUNTRY"
-            echo "   Region: $BEST_REGION"
-            echo "   City: $BEST_CITY"
-            echo "🏆 =================================================="
-            echo ""
-            
-            # Geographic distribution analysis
-            echo "🌍 Geographic Distribution Analysis:"
-            jq -r 'group_by(.country) | .[] | "\(.  [0].country): \(length) proxies"' quantum_results.json 2>/dev/null | head -10 || true
+            echo "   Location: $BEST_LOC"
+            echo "🏆 =============================================="
             echo ""
           fi
           
@@ -1051,13 +756,10 @@ jobs:
           echo "best_ttfb=$BEST_TTFB" >> $GITHUB_OUTPUT
           echo "best_jitter=$BEST_JITTER" >> $GITHUB_OUTPUT
           echo "best_stability=$BEST_STABILITY" >> $GITHUB_OUTPUT
-          echo "best_country=$BEST_COUNTRY" >> $GITHUB_OUTPUT
-          echo "best_region=$BEST_REGION" >> $GITHUB_OUTPUT
-          echo "best_city=$BEST_CITY" >> $GITHUB_OUTPUT
-          echo "best_port=$BEST_PORT" >> $GITHUB_OUTPUT
+          echo "best_loc=$BEST_LOC" >> $GITHUB_OUTPUT
           echo "result_count=$RESULT_COUNT" >> $GITHUB_OUTPUT
 
-      - name: 💾 Enhanced D1 Database with Full Geographic Data
+      - name: 💾 Cloudflare D1 Database Commit with Champion Selection
         id: db_sync
         continue-on-error: true
         env:
@@ -1070,37 +772,27 @@ jobs:
           BEST_TTFB: ${{ steps.neural_selection.outputs.best_ttfb }}
           BEST_JITTER: ${{ steps.neural_selection.outputs.best_jitter }}
           BEST_STABILITY: ${{ steps.neural_selection.outputs.best_stability }}
-          BEST_COUNTRY: ${{ steps.neural_selection.outputs.best_country }}
-          BEST_REGION: ${{ steps.neural_selection.outputs.best_region }}
-          BEST_CITY: ${{ steps.neural_selection.outputs.best_city }}
-          BEST_PORT: ${{ steps.neural_selection.outputs.best_port }}
+          BEST_LOC: ${{ steps.neural_selection.outputs.best_loc }}
         run: |
           if [ -z "$CF_API_TOKEN" ]; then
             echo "ℹ️  D1 database not configured, skipping sync"
             exit 0
           fi
           
-          echo "💾 Synchronizing with enhanced Cloudflare D1 database..."
-          echo "🏆 Implementing intelligent champion selection with full geographic data..."
+          echo "💾 Synchronizing with Cloudflare D1 long-term memory..."
+          echo "🏆 Implementing intelligent champion selection system..."
           
           TIMESTAMP=$(date +%s)
           
-          # Enhanced schema with full geographic columns
+          # Enhanced schema with is_current_best column
           SQL_SCHEMA="CREATE TABLE IF NOT EXISTS proxy_health (
             ip_port TEXT PRIMARY KEY,
-            ip_address TEXT,
-            port INTEGER,
             total_score INTEGER,
             latency_ms INTEGER,
             ttfb_ms INTEGER,
             jitter_ms INTEGER,
             stability_pct INTEGER,
             location TEXT,
-            geo_country TEXT,
-            geo_region TEXT,
-            geo_city TEXT,
-            geo_latitude REAL,
-            geo_longitude REAL,
             last_check INTEGER,
             check_count INTEGER DEFAULT 1,
             success_rate REAL DEFAULT 100.0,
@@ -1117,9 +809,10 @@ jobs:
             -H "Content-Type: application/json" \
             --data "$(jq -n --arg sql "$SQL_SCHEMA" '{sql: $sql}')" > /dev/null 2>&1
           
-          echo "✅ Enhanced schema with full geographic tracking validated"
+          echo "✅ Enhanced schema with champion tracking validated"
           
-          # Reset all champions
+          # CRITICAL: First, reset ALL proxies to is_current_best = 0
+          # This ensures only ONE proxy will be marked as champion
           SQL_RESET="UPDATE proxy_health SET is_current_best = 0;"
           
           RESET_RESP=$(curl -s --max-time 10 -X POST \
@@ -1130,29 +823,25 @@ jobs:
           
           if echo "$RESET_RESP" | grep -q '"success":true' 2>/dev/null; then
             echo "✅ All previous champions reset successfully"
+          else
+            echo "⚠️  Champion reset warning (continuing...)"
           fi
           
-          # Insert new champion with full geographic data
-          CLEAN_IP=$(echo "$BEST_IP" | cut -d':' -f1)
-          
+          # Now insert/update the NEW champion with is_current_best = 1
           SQL_CHAMPION="INSERT INTO proxy_health (
-            ip_port, ip_address, port, total_score, latency_ms, ttfb_ms, jitter_ms, 
-            stability_pct, location, geo_country, geo_region, geo_city,
-            last_check, is_healthy, is_current_best, first_seen, best_score, 
-            check_count, last_champion_time
+            ip_port, total_score, latency_ms, ttfb_ms, jitter_ms, 
+            stability_pct, location, last_check, is_healthy, 
+            is_current_best, first_seen, best_score, check_count, last_champion_time
           ) VALUES (
-            '$BEST_IP', '$CLEAN_IP', $BEST_PORT, $BEST_SCORE, $BEST_LAT, $BEST_TTFB, $BEST_JITTER,
-            $BEST_STABILITY, '$BEST_COUNTRY', '$BEST_COUNTRY', '$BEST_REGION', '$BEST_CITY',
-            $TIMESTAMP, 1, 1, $TIMESTAMP, $BEST_SCORE, 1, $TIMESTAMP
+            '$BEST_IP', $BEST_SCORE, $BEST_LAT, $BEST_TTFB, $BEST_JITTER,
+            $BEST_STABILITY, '$BEST_LOC', $TIMESTAMP, 1,
+            1, $TIMESTAMP, $BEST_SCORE, 1, $TIMESTAMP
           ) ON CONFLICT(ip_port) DO UPDATE SET
             total_score = $BEST_SCORE,
             latency_ms = $BEST_LAT,
             ttfb_ms = $BEST_TTFB,
             jitter_ms = $BEST_JITTER,
             stability_pct = $BEST_STABILITY,
-            geo_country = '$BEST_COUNTRY',
-            geo_region = '$BEST_REGION',
-            geo_city = '$BEST_CITY',
             last_check = $TIMESTAMP,
             check_count = check_count + 1,
             success_rate = (success_rate * check_count + 100.0) / (check_count + 1),
@@ -1168,50 +857,48 @@ jobs:
             --data "$(jq -n --arg sql "$SQL_CHAMPION" '{sql: $sql}')" 2>/dev/null)
           
           if echo "$CHAMP_RESP" | grep -q '"success":true' 2>/dev/null; then
-            echo "✅ 🏆 NEW CHAMPION CROWNED: $BEST_IP (Score: $BEST_SCORE, Location: $BEST_COUNTRY)"
+            echo "✅ 🏆 NEW CHAMPION CROWNED: $BEST_IP (Score: $BEST_SCORE)"
+          else
+            echo "⚠️  Champion update warning: $(echo "$CHAMP_RESP" | jq -r '.errors[0].message // "Unknown error"' 2>/dev/null || echo "Connection issue")"
           fi
           
-          # Batch process top 20 performers with geographic data
-          echo "💾 Committing top 20 performers with geographic intelligence..."
+          # Batch process top 10 performers (but they won't be marked as champion)
+          echo "💾 Committing top performers to knowledge base..."
           
-          if [ -f results/top20_proxies.json ]; then
-            TOP20_COUNT=$(jq '. | length' results/top20_proxies.json 2>/dev/null || echo "0")
-            echo "📊 Processing $TOP20_COUNT elite proxies with full geographic data..."
+          if [ -f results/top10_proxies.json ]; then
+            TOP10_COUNT=$(jq '. | length' results/top10_proxies.json 2>/dev/null || echo "0")
+            echo "📊 Processing $TOP10_COUNT elite proxies..."
             
-            jq -c '.[]' results/top20_proxies.json 2>/dev/null | while read -r proxy; do
+            jq -c '.[]' results/top10_proxies.json 2>/dev/null | while read -r proxy; do
               P_IP=$(echo "$proxy" | jq -r '.ip_port // ""' 2>/dev/null)
-              P_IP_ADDR=$(echo "$proxy" | jq -r '.ip // ""' 2>/dev/null)
-              P_PORT=$(echo "$proxy" | jq -r '.port // 0' 2>/dev/null)
               P_SCORE=$(echo "$proxy" | jq -r '.score // 0' 2>/dev/null)
               P_LAT=$(echo "$proxy" | jq -r '.latency // 0' 2>/dev/null)
               P_TTFB=$(echo "$proxy" | jq -r '.ttfb // 0' 2>/dev/null)
               P_JITTER=$(echo "$proxy" | jq -r '.jitter // 0' 2>/dev/null)
               P_STAB=$(echo "$proxy" | jq -r '.stability // 0' 2>/dev/null)
-              P_COUNTRY=$(echo "$proxy" | jq -r '.country // "Unknown"' 2>/dev/null)
-              P_REGION=$(echo "$proxy" | jq -r '.region // "Unknown"' 2>/dev/null)
-              P_CITY=$(echo "$proxy" | jq -r '.city // "Unknown"' 2>/dev/null)
               
               if [ -z "$P_IP" ] || [ "$P_IP" == "$BEST_IP" ]; then
                 continue
               fi
               
+              P_CLEAN_IP=$(echo "$P_IP" | cut -d':' -f1)
+              P_LOC=$(geoiplookup "$P_CLEAN_IP" 2>/dev/null | awk -F': ' '{print $2}' | cut -d',' -f1 | head -c 2 || echo "XX")
+              
+              # These proxies are NOT champions, so is_current_best stays 0
               SQL_BATCH="INSERT INTO proxy_health (
-                ip_port, ip_address, port, total_score, latency_ms, ttfb_ms, jitter_ms, 
-                stability_pct, location, geo_country, geo_region, geo_city,
-                last_check, is_healthy, is_current_best, first_seen, best_score, check_count
+                ip_port, total_score, latency_ms, ttfb_ms, jitter_ms, 
+                stability_pct, location, last_check, is_healthy, 
+                is_current_best, first_seen, best_score, check_count
               ) VALUES (
-                '$P_IP', '$P_IP_ADDR', $P_PORT, $P_SCORE, $P_LAT, $P_TTFB, $P_JITTER, 
-                $P_STAB, '$P_COUNTRY', '$P_COUNTRY', '$P_REGION', '$P_CITY',
-                $TIMESTAMP, 1, 0, $TIMESTAMP, $P_SCORE, 1
+                '$P_IP', $P_SCORE, $P_LAT, $P_TTFB, $P_JITTER, 
+                $P_STAB, '$P_LOC', $TIMESTAMP, 1, 
+                0, $TIMESTAMP, $P_SCORE, 1
               ) ON CONFLICT(ip_port) DO UPDATE SET 
                 total_score=$P_SCORE, 
                 latency_ms=$P_LAT, 
                 ttfb_ms=$P_TTFB, 
                 jitter_ms=$P_JITTER, 
-                stability_pct=$P_STAB,
-                geo_country='$P_COUNTRY',
-                geo_region='$P_REGION',
-                geo_city='$P_CITY',
+                stability_pct=$P_STAB, 
                 last_check=$TIMESTAMP, 
                 check_count=check_count+1, 
                 is_healthy=1, 
@@ -1225,11 +912,11 @@ jobs:
                 --data "$(jq -n --arg sql "$SQL_BATCH" '{sql: $sql}')" > /dev/null 2>&1
             done
             
-            echo "✅ Knowledge base updated with top 20 performers including full geographic data"
+            echo "✅ Knowledge base updated with top performers"
           fi
           
           # Verify champion status
-          SQL_VERIFY="SELECT ip_port, total_score, geo_country, geo_city, is_current_best FROM proxy_health WHERE is_current_best = 1;"
+          SQL_VERIFY="SELECT ip_port, total_score, is_current_best FROM proxy_health WHERE is_current_best = 1;"
           
           VERIFY_RESP=$(curl -s --max-time 10 -X POST \
             "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/d1/database/$D1_DATABASE_ID/query" \
@@ -1240,20 +927,20 @@ jobs:
           CHAMPION_COUNT=$(echo "$VERIFY_RESP" | jq -r '.result[0].results | length' 2>/dev/null || echo "0")
           
           echo ""
-          echo "🔍 Enhanced Champion Verification:"
+          echo "🔍 Champion Verification:"
           echo "  • Champions in database: $CHAMPION_COUNT"
           
           if [ "$CHAMPION_COUNT" -eq 1 ]; then
             VERIFIED_CHAMP=$(echo "$VERIFY_RESP" | jq -r '.result[0].results[0].ip_port' 2>/dev/null || echo "unknown")
-            VERIFIED_COUNTRY=$(echo "$VERIFY_RESP" | jq -r '.result[0].results[0].geo_country' 2>/dev/null || echo "unknown")
-            echo "  • ✅ Single champion verified: $VERIFIED_CHAMP ($VERIFIED_COUNTRY)"
+            echo "  • ✅ Single champion verified: $VERIFIED_CHAMP"
           elif [ "$CHAMPION_COUNT" -gt 1 ]; then
-            echo "  • ⚠️  WARNING: Multiple champions detected!"
+            echo "  • ⚠️  WARNING: Multiple champions detected! This should not happen."
+            echo "$VERIFY_RESP" | jq -r '.result[0].results[]? | "    - \(.ip_port) (Score: \(.total_score))"' 2>/dev/null || true
           else
             echo "  • ⚠️  No champion found in database"
           fi
           
-          # Database maintenance with geographic awareness
+          # Database maintenance
           OLD_THRESHOLD=$((TIMESTAMP - 604800))
           SQL_CLEANUP="DELETE FROM proxy_health WHERE last_check < $OLD_THRESHOLD AND is_healthy = 0 AND is_current_best = 0;"
           
@@ -1263,27 +950,22 @@ jobs:
             -H "Content-Type: application/json" \
             --data "$(jq -n --arg sql "$SQL_CLEANUP" '{sql: $sql}')" > /dev/null 2>&1
           
-          echo "✅ Database maintenance completed with geographic intelligence"
+          echo "✅ Database maintenance completed"
           echo ""
           echo "champion_verified=$CHAMPION_COUNT" >> $GITHUB_OUTPUT
 
-      - name: 🔍 Enhanced Final Verification & Quality Assurance
+      - name: 🔍 Final Verification & Quality Assurance
         id: verification
         run: |
-          echo "🔍 Performing enhanced quality assurance with geographic verification..."
+          echo "🔍 Performing final quality assurance checks..."
           
           BEST_IP="${{ steps.neural_selection.outputs.best_ip }}"
-          BEST_COUNTRY="${{ steps.neural_selection.outputs.best_country }}"
-          BEST_PORT="${{ steps.neural_selection.outputs.best_port }}"
           
           PROXY_IP=$(echo "$BEST_IP" | cut -d':' -f1)
           PROXY_PORT=$(echo "$BEST_IP" | cut -d':' -f2)
           
           echo "🎯 Verifying champion proxy: $BEST_IP"
-          echo "🌍 Geographic Location: $BEST_COUNTRY"
-          echo "🔌 Port: $BEST_PORT"
           
-          # Port connectivity test
           if timeout 5 nc -zv "$PROXY_IP" "$PROXY_PORT" 2>&1 | grep -q succeeded; then
             echo "✅ Port connectivity verified"
             echo "port_check=pass" >> $GITHUB_OUTPUT
@@ -1292,7 +974,6 @@ jobs:
             echo "port_check=warn" >> $GITHUB_OUTPUT
           fi
           
-          # IP validation
           if host "$PROXY_IP" > /dev/null 2>&1 || [ -n "$PROXY_IP" ]; then
             echo "✅ IP validation passed"
             echo "ip_check=pass" >> $GITHUB_OUTPUT
@@ -1301,54 +982,43 @@ jobs:
             echo "ip_check=warn" >> $GITHUB_OUTPUT
           fi
           
-          # Geographic verification
-          if [ "$BEST_COUNTRY" != "Unknown" ] && [ "$BEST_COUNTRY" != "XX" ]; then
-            echo "✅ Geographic data verified: $BEST_COUNTRY"
-            echo "geo_check=pass" >> $GITHUB_OUTPUT
-          else
-            echo "⚠️  Geographic data unavailable"
-            echo "geo_check=warn" >> $GITHUB_OUTPUT
-          fi
-          
-          # Performance grading
           LAT="${{ steps.neural_selection.outputs.best_lat }}"
           TTFB="${{ steps.neural_selection.outputs.best_ttfb }}"
           SCORE="${{ steps.neural_selection.outputs.best_score }}"
           
-          if [ "$SCORE" -gt 10000 ]; then
-            GRADE="S+ Elite Champion"
-          elif [ "$SCORE" -gt 6000 ]; then
-            GRADE="S Excellent"
+          if [ "$SCORE" -gt 5000 ]; then
+            GRADE="S+ (Elite)"
           elif [ "$SCORE" -gt 3000 ]; then
-            GRADE="A Very Good"
+            GRADE="S (Excellent)"
           elif [ "$SCORE" -gt 1500 ]; then
-            GRADE="B Good"
+            GRADE="A (Very Good)"
           elif [ "$SCORE" -gt 800 ]; then
-            GRADE="C Average"
+            GRADE="B (Good)"
+          elif [ "$SCORE" -gt 400 ]; then
+            GRADE="C (Average)"
           else
-            GRADE="D Below Average"
+            GRADE="D (Below Average)"
           fi
           
           echo "performance_grade=$GRADE" >> $GITHUB_OUTPUT
           echo ""
           echo "📊 Performance Grade: $GRADE"
-          echo "🌍 Geographic Grade: $([ "$BEST_COUNTRY" != "Unknown" ] && echo "Verified" || echo "Pending")"
 
-      - name: 📊 Generate Ultimate Enhanced Report
+      - name: 📊 Generate Ultimate Quantum Report
         if: always()
         run: |
-          echo "📝 Generating comprehensive analysis report with full geographic intelligence..."
+          echo "📝 Generating comprehensive analysis report..."
           
           cat > results/ultimate_report.md << 'REPORT_EOF'
-          # 🌌 Enhanced Quantum-AI Proxy Evolution Report v3.0
+          # 🌌 Ultimate Quantum-AI Proxy Evolution Report v2.2
           
-          ## 🏆 Champion Proxy Selection with Geographic Intelligence
+          ## 🏆 Champion Proxy Selection
           
           **Selected Champion Node:** `${{ steps.neural_selection.outputs.best_ip }}`
           
           **Champion Status:** ${{ steps.db_sync.outputs.champion_verified == '1' && '✅ Verified Single Champion' || '⚠️ Verification Pending' }}
           
-          ### 📊 Enhanced Performance Metrics
+          ### 📊 Performance Metrics
           
           | Metric | Value | Status |
           |:-------|:------|:-------|
@@ -1357,103 +1027,67 @@ jobs:
           | **TTFB** | `${{ steps.neural_selection.outputs.best_ttfb }} ms` | 🚀 Response |
           | **Jitter** | `${{ steps.neural_selection.outputs.best_jitter }} ms` | 📊 Variance |
           | **Stability** | `${{ steps.neural_selection.outputs.best_stability }}%` | ✅ Reliability |
-          | **Port Number** | `${{ steps.neural_selection.outputs.best_port }}` | 🔌 Connection |
-          | **Country** | `${{ steps.neural_selection.outputs.best_country }}` | 🌍 Location |
-          | **Region** | `${{ steps.neural_selection.outputs.best_region }}` | 🗺️ Area |
-          | **City** | `${{ steps.neural_selection.outputs.best_city }}` | 🏙️ Locality |
+          | **Location** | `${{ steps.neural_selection.outputs.best_loc }}` | 🌍 Region |
           | **Champion Status** | `is_current_best = 1` | 🏆 Active |
           
-          ### 🎯 Enhanced Scan Statistics
+          ### 🎯 Scan Statistics
           
-          The enhanced scanning system evaluated a comprehensive set of proxy candidates using advanced multi-dimensional analysis. The scan mode was configured to `${{ github.event.inputs.scan_mode || 'hybrid_quantum_ultra' }}`, which balances speed with accuracy for optimal results. The system processed targets through advanced multi-source aggregation, discovering `${{ steps.neural_selection.outputs.result_count }}` viable candidates that met the quality thresholds.
+          - **Scan Mode:** `${{ github.event.inputs.scan_mode || 'hybrid_quantum_ultra' }}`
+          - **Targets Evaluated:** Advanced multi-source aggregation
+          - **Viable Candidates:** `${{ steps.neural_selection.outputs.result_count }}`
+          - **Memory Nodes Used:** `${{ steps.memory_recall.outputs.memory_count || '0' }}`
+          - **Champions in DB:** `${{ steps.db_sync.outputs.champion_verified || 'N/A' }}`
           
-          Geographic intelligence was integrated throughout the scanning process, with the system utilizing `${{ steps.memory_recall.outputs.memory_count || '0' }}` historically successful nodes from the AI memory system. The database currently maintains `${{ steps.db_sync.outputs.champion_verified || 'N/A' }}` champion proxies with full geographic metadata.
+          ### 🧠 AI Champion Selection System
           
-          Port randomization was enabled with a range from `${{ github.event.inputs.port_range_min || '80' }}` to `${{ github.event.inputs.port_range_max || '65535' }}`, allowing the system to discover proxies across the full spectrum of available network ports. This significantly expands the discovery capabilities beyond common proxy ports.
+          This proxy was crowned as the **single active champion** using our advanced intelligent selection algorithm that implements a two-phase process to ensure only one proxy holds the title at any given time.
           
-          ### 🌍 Geographic Intelligence Features
+          The system evaluates candidates across multiple dimensions including TCP connection latency for measuring raw network speed, time to first byte which represents real-world data transmission performance, network jitter to assess consistency and stability, reliability scores across multiple test iterations, and historical performance data from the D1 database for trend analysis.
           
-          The version 3.0 system introduces comprehensive geographic tracking and optimization. Each proxy candidate is analyzed not only for network performance but also for geographic diversity and location preferences. The system tracks country, region, and city information for every proxy, enabling intelligent location-based selection strategies.
+          The champion selection process works through a critical two-step atomic operation. First, the system resets all existing proxies in the database by setting their is_current_best flag to zero, which ensures we start from a clean slate with no previous champions. Then, in the second phase, it crowns the new champion by setting is_current_best equals one exclusively for the highest-scoring proxy based on comprehensive neural scoring.
           
-          When geographic diversity mode is enabled as configured to `${{ github.event.inputs.enable_geo_diversity || 'true' }}`, the selection algorithm ensures optimal distribution across different geographic regions. This prevents clustering of proxies in a single location and provides better global coverage.
-          
-          Location preferences were configured as `${{ github.event.inputs.preferred_locations || 'Auto' }}`, allowing users to prioritize proxies from specific countries or regions. The system applies location scoring bonuses to proxies matching the preferred locations while maintaining overall performance as the primary selection criterion.
-          
-          ### 🧠 Enhanced AI Champion Selection System
-          
-          The enhanced champion selection system represents a significant evolution from previous versions. This proxy was crowned as the single active champion using an advanced intelligent selection algorithm that implements a two-phase atomic process to ensure only one proxy holds the title at any given time.
-          
-          The system evaluates candidates across multiple enhanced dimensions. TCP connection latency measures raw network speed and connection establishment time. Time to first byte represents real-world data transmission performance and server responsiveness. Network jitter assesses consistency and stability across multiple test iterations. Reliability scores track success rates across repeated evaluations. Historical performance data from the D1 database enables trend analysis and long-term reliability assessment. Geographic location scoring provides bonuses for preferred locations and ensures diversity.
-          
-          The champion selection process employs a critical two-step atomic operation. In the first phase, the system resets all existing proxies in the database by setting their is_current_best flag to zero, ensuring a clean slate with no previous champions. In the second phase, it crowns the new champion by setting is_current_best equals one exclusively for the highest-scoring proxy based on comprehensive neural scoring that includes geographic factors.
-          
-          This atomic approach with enhanced geographic intelligence guarantees that at any moment in time, exactly one proxy carries the champion designation with full location metadata. Applications can simply query the database with a WHERE clause filtering for is_current_best equals one to instantly retrieve the optimal proxy along with its complete geographic profile.
-          
-          ### 🎲 Port Randomization & Discovery
-          
-          The enhanced system introduces intelligent port randomization to discover proxies across the entire network port spectrum. Rather than limiting scans to common proxy ports like 8080, 3128, or 1080, the system now dynamically generates port variations for discovered IP addresses.
-          
-          The port randomization algorithm works by first collecting all proxies from multiple sources with their original ports, then applying intelligent variation strategies. For each unique IP address discovered, the system may keep the original port, add randomized common ports if they fall within the configured range, or generate truly random ports with a controlled probability distribution.
-          
-          This approach significantly increases the discovery surface area, potentially finding high-performance proxies running on non-standard ports that traditional scanning systems would miss. The port range configuration allows users to focus scanning on specific port ranges based on their network environment and security requirements.
+          This atomic approach guarantees that at any moment in time, exactly one proxy carries the champion designation, making it trivial to query for the current best performer. Applications can simply query the database with a WHERE clause filtering for is_current_best equals one to instantly retrieve the optimal proxy without needing to sort through all historical data.
           
           ### 🔍 Verification Results
           
-          Comprehensive verification checks were performed on the champion proxy to ensure reliability and accessibility. Port connectivity verification confirms that the network port is accessible and responding to connection attempts, reported as `${{ steps.verification.outputs.port_check || 'N/A' }}`. IP validation ensures the IP address is properly formatted and resolvable through DNS systems, with a status of `${{ steps.verification.outputs.ip_check || 'N/A' }}`. Geographic verification confirms that location data was successfully retrieved and validated, showing `${{ steps.verification.outputs.geo_check || 'N/A' }}`. Performance grade assessment evaluates overall quality as `${{ steps.verification.outputs.performance_grade || 'N/A' }}`. Database champion count verification confirms single champion status at `${{ steps.db_sync.outputs.champion_verified || 'N/A' }}`.
+          - Port Connectivity: `${{ steps.verification.outputs.port_check || 'N/A' }}`
+          - IP Validation: `${{ steps.verification.outputs.ip_check || 'N/A' }}`
+          - Performance Grade: `${{ steps.verification.outputs.performance_grade || 'N/A' }}`
+          - Database Champion Count: `${{ steps.db_sync.outputs.champion_verified || 'N/A' }}`
           
-          ### 📈 System Performance & Capabilities
+          ### 📈 System Performance
           
-          The enhanced system operates with maximum performance optimizations enabled. Kernel optimization includes Google BBR congestion control algorithm for optimal network throughput. The thread pool implements adaptive multi-threading that scales based on workload complexity and available system resources. Database synchronization with Cloudflare D1 is ${{ secrets.CLOUDFLARE_API_TOKEN && '✅ Active with full geographic tracking' || '⚠️ Disabled' }}. The champion system utilizes intelligent single-winner selection with atomic operations and full location metadata. Memory recall from historical data is ${{ steps.memory_recall.outputs.memory_count > 0 && '✅ Active with location intelligence' || '⚠️ Fresh scan only' }}. Geographic diversity mode optimizes for balanced global distribution when enabled.
+          - Kernel Optimization: ✅ Google BBR Active
+          - Thread Pool: ✅ Adaptive Multi-Threading
+          - Database Sync: ${{ secrets.CLOUDFLARE_API_TOKEN && '✅ D1 Synchronized' || '⚠️ Disabled' }}
+          - Champion System: ✅ Intelligent Single-Winner Selection
+          - Memory Recall: ${{ steps.memory_recall.outputs.memory_count > 0 && '✅ Active' || '⚠️ Fresh Scan Only' }}
           
-          ### 📦 Enhanced Output Files
+          ### 📦 Output Files
           
-          The system generates comprehensive output files for analysis and integration. The quantum_results.json file contains the full results dataset with complete geographic metadata for all viable proxies. The results/top20_proxies.json file includes the top 20 performers ranked by neural score. The results/top_diverse_proxies.json file contains geographically diverse top performers, selecting the best proxy from each country. The results/geo_distribution.json file provides geographic analysis and country-based statistics. The logs/detailed_results.txt file offers detailed analysis logs with full performance and location data. The logs/scanner_output.txt file captures raw scanner output for debugging purposes.
+          - `quantum_results.json` - Full results dataset
+          - `results/top10_proxies.json` - Top 10 performers
+          - `logs/detailed_results.txt` - Detailed analysis log
+          - `logs/scanner_output.txt` - Raw scanner output
           
-          ### 🎯 Database Query Examples
+          ### 🎯 How to Query the Current Champion
           
-          To retrieve the current champion proxy with all geographic information from your D1 database, use this comprehensive SQL query:
+          To retrieve the current best proxy from your D1 database, use this simple SQL query:
           
           ```sql
-          SELECT ip_port, ip_address, port, total_score, 
-                 latency_ms, ttfb_ms, stability_pct,
-                 geo_country, geo_region, geo_city,
-                 last_champion_time
+          SELECT ip_port, total_score, latency_ms, ttfb_ms, 
+                 stability_pct, location, last_champion_time
           FROM proxy_health 
           WHERE is_current_best = 1;
           ```
           
-          This will always return exactly one row containing the current champion proxy with complete performance metrics and full geographic profile including country, region, and city information.
-          
-          To find all proxies from a specific country or region:
-          
-          ```sql
-          SELECT ip_port, total_score, geo_country, geo_city
-          FROM proxy_health
-          WHERE geo_country = 'US' 
-            AND is_healthy = 1
-          ORDER BY total_score DESC
-          LIMIT 10;
-          ```
-          
-          To analyze geographic distribution and find the best proxy from each country:
-          
-          ```sql
-          SELECT geo_country, 
-                 MAX(total_score) as best_score,
-                 COUNT(*) as proxy_count
-          FROM proxy_health
-          WHERE is_healthy = 1
-          GROUP BY geo_country
-          ORDER BY best_score DESC;
-          ```
+          This will always return exactly one row containing the current champion proxy with all its performance metrics.
           
           ---
           
-          *Generated by Enhanced Quantum-AI Neural Engine v3.0*  
-          *Champion Selection System: Active with Geographic Intelligence*  
+          *Generated by Ultimate Quantum-AI Neural Engine v2.2*  
+          *Champion Selection System: Active*  
           *Scan Mode: ${{ github.event.inputs.scan_mode || 'hybrid_quantum_ultra' }}*  
-          *Geographic Diversity: ${{ github.event.inputs.enable_geo_diversity || 'true' }}*  
-          *Port Range: ${{ github.event.inputs.port_range_min || '80' }}-${{ github.event.inputs.port_range_max || '65535' }}*  
           *Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")*  
           *Run Number: #${{ github.run_number }}*
           REPORT_EOF
@@ -1462,54 +1096,46 @@ jobs:
           
           cat results/ultimate_report_final.md >> $GITHUB_STEP_SUMMARY 2>/dev/null || true
           
-          echo "✅ Comprehensive enhanced report generated with full geographic intelligence"
+          echo "✅ Comprehensive report with champion tracking generated"
 
-      - name: 📦 Archive Enhanced Results & Artifacts
+      - name: 📦 Archive Results & Artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: enhanced-quantum-proxy-results-run-${{ github.run_number }}
+          name: quantum-proxy-results-run-${{ github.run_number }}
           path: |
             quantum_results.json
             results/
             logs/
-            geo_data/
           retention-days: 30
           if-no-files-found: warn
           compression-level: 6
 
-      - name: 🎉 Mission Complete with Enhanced Capabilities
+      - name: 🎉 Mission Complete
         if: success()
         run: |
           echo ""
-          echo "🎉 =================================================="
-          echo "🎉 ENHANCED QUANTUM EVOLUTION CYCLE COMPLETE"
-          echo "🎉 =================================================="
+          echo "🎉 =============================================="
+          echo "🎉 QUANTUM EVOLUTION CYCLE COMPLETE"
+          echo "🎉 =============================================="
           echo ""
-          echo "✅ All enhanced systems nominal"
-          echo "✅ Champion proxy selected with full geographic data"
+          echo "✅ All systems nominal"
+          echo "✅ Champion proxy selected and verified"
           echo "✅ Database champion flag set (is_current_best = 1)"
-          echo "✅ Long-term memory updated with location intelligence"
-          echo "✅ Geographic distribution analyzed"
-          echo "✅ Port randomization applied successfully"
-          echo "✅ Reports generated with comprehensive data"
+          echo "✅ Long-term memory updated"
+          echo "✅ Reports generated"
           echo "✅ Artifacts archived successfully"
           echo ""
-          echo "🚀 Enhanced system ready for next evolution cycle"
+          echo "🚀 System ready for next evolution cycle"
           echo "📊 Run Number: ${{ github.run_number }}"
           echo "⏰ Completed at: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
           echo ""
-          echo "📋 Enhanced Quick Access:"
+          echo "📋 Quick Access:"
           echo "   • Best Proxy: ${{ steps.neural_selection.outputs.best_ip }}"
-          echo "   • Port: ${{ steps.neural_selection.outputs.best_port }}"
           echo "   • Score: ${{ steps.neural_selection.outputs.best_score }}"
           echo "   • Grade: ${{ steps.verification.outputs.performance_grade }}"
-          echo "   • Country: ${{ steps.neural_selection.outputs.best_country }}"
-          echo "   • Region: ${{ steps.neural_selection.outputs.best_region }}"
-          echo "   • City: ${{ steps.neural_selection.outputs.best_city }}"
           echo "   • Champion Status: is_current_best = 1"
           echo "   • DB Champions: ${{ steps.db_sync.outputs.champion_verified }}"
-          echo "   • Geographic Tracking: ✅ Full Location Data"
           echo ""
 
   cleanup-old-runs:
